@@ -74,6 +74,32 @@ const handleSubmit = async (e) => {
 
   const msgDiv = document.getElementById(uniqueId);
   loader(msgDiv);
+
+  //
+  const response = await fetch("http://localhost:5000/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt: data.get("prompt"),
+    }),
+  });
+
+  clearInterval(loadInterval);
+  msgDiv.innerHTML = " ";
+
+  if (response.ok) {
+    const data = await response.json();
+    const parsedData = data.bot.trim();
+
+    typeText(msgDiv, parsedData);
+  } else {
+    const err = await response.text();
+
+    msgDiv.innerHTML = "Something went wrong";
+    alert(err);
+  }
 };
 
 //
